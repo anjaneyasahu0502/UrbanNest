@@ -1,0 +1,139 @@
+<nav class="navbar navbar-expand-lg un-navbar sticky-top">
+  <div class="container un-navbar-inner">
+    <% const user = typeof currentUser !== 'undefined' ? currentUser : null; %>
+
+    <!-- Brand -->
+    <a class="navbar-brand un-brand d-flex align-items-center gap-2" href="/">
+      <span class="un-logo-icon"><i class="bi bi-buildings-fill"></i></span>
+      <span class="un-brand-text">UrbanNest</span>
+    </a>
+
+    <!-- Mobile toggler -->
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+      data-bs-target="#unNavbar" aria-controls="unNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="unNavbar">
+
+      <!-- Left nav links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
+        <li class="nav-item">
+          <a class="nav-link un-nav-link" href="/"><i class="bi bi-house-door me-1"></i>Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link un-nav-link" href="/listings"><i class="bi bi-grid-3x3-gap me-1"></i>Listings</a>
+        </li>
+        <% if (user && user.role === 'admin') { %>
+        <li class="nav-item">
+          <a class="nav-link un-nav-link" href="/listings/new"><i class="bi bi-plus-circle me-1"></i>Add Listing</a>
+        </li>
+        <% } %>
+        <li class="nav-item">
+          <a class="nav-link un-nav-link un-ai-link" href="/sahayata">
+            <i class="fas fa-robot me-1"></i>Sahayata AI
+          </a>
+        </li>
+      </ul>
+
+      <!-- Search bar -->
+      <form class="d-flex position-relative search-assistant-form me-3" role="search"
+        action="/listings" method="GET" data-search-assistant-form>
+        <div class="un-search-wrap d-flex align-items-center">
+          <i class="bi bi-search un-search-icon"></i>
+          <input class="form-control un-search-input" type="search" name="q"
+            placeholder="Search cities, stays..." aria-label="Search"
+            autocomplete="off" data-search-assistant-input />
+          <button class="btn un-search-btn" type="submit">Search</button>
+        </div>
+        <div class="list-group search-assistant-results shadow d-none" data-search-assistant-results></div>
+      </form>
+
+      <!-- Right section: auth -->
+      <ul class="navbar-nav align-items-lg-center mb-2 mb-lg-0">
+        <% if (!user) { %>
+          <li class="nav-item">
+            <a class="btn un-btn-outline-saffron btn-sm me-2" href="/auth/register">Sign Up</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn un-btn-saffron btn-sm" href="/auth/login">Sign In</a>
+          </li>
+        <% } else { %>
+          <!-- User avatar dropdown -->
+          <li class="nav-item dropdown">
+            <button class="btn p-0 border-0 bg-transparent d-flex align-items-center gap-2 un-avatar-trigger"
+              id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <!-- Avatar circle with initial — gold for admin, saffron for user -->
+              <span class="un-avatar <%= user.role === 'admin' ? 'un-avatar-admin' : '' %>">
+                <%= user.username.charAt(0).toUpperCase() %>
+              </span>
+              <span class="un-avatar-name d-none d-lg-inline"><%= user.username %></span>
+              <% if (user.role === 'admin') { %>
+                <span class="badge d-none d-lg-inline" style="background:linear-gradient(135deg,#000080,#1a1aff);font-size:0.6rem;padding:2px 6px;border-radius:2rem;vertical-align:middle;">🛡️</span>
+              <% } %>
+              <i class="bi bi-chevron-down un-chevron d-none d-lg-inline"></i>
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end un-dropdown shadow-lg mt-2"
+              aria-labelledby="userDropdown">
+              <!-- User info header -->
+              <li>
+                <div class="un-dropdown-header d-flex align-items-center gap-3 px-4 py-3">
+                  <span class="un-avatar un-avatar-lg">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                  </span>
+                  <div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="fw-bold un-dropdown-username"><%= user.username %></span>
+                      <% if (user.role === 'admin') { %>
+                        <span class="badge" style="background:linear-gradient(135deg,#000080,#1a1aff);font-size:0.65rem;padding:3px 7px;border-radius:2rem;">
+                          🛡️ Admin
+                        </span>
+                      <% } %>
+                    </div>
+                    <div class="text-muted small"><%= user.email || 'UrbanNest Member' %></div>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider my-1"></li>
+
+              <% if (user.role === 'admin') { %>
+              <li>
+                <a class="dropdown-item un-dropdown-item" href="/listings/new">
+                  <i class="bi bi-plus-circle"></i> Add New Listing
+                </a>
+              </li>
+              <% } %>
+              <li>
+                <a class="dropdown-item un-dropdown-item" href="/bookings">
+                  <i class="bi bi-calendar-check"></i> My Bookings
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item un-dropdown-item" href="/bookings/host">
+                  <i class="bi bi-house-gear"></i> Host Dashboard
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item un-dropdown-item" href="/sahayata">
+                  <i class="fas fa-robot"></i> Sahayata AI
+                </a>
+              </li>
+
+              <li><hr class="dropdown-divider my-1"></li>
+
+              <li>
+                <form action="/auth/logout" method="POST">
+                  <button type="submit" class="dropdown-item un-dropdown-item un-logout-item">
+                    <i class="bi bi-box-arrow-right"></i> Sign Out
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </li>
+        <% } %>
+      </ul>
+
+    </div>
+  </div>
+</nav>

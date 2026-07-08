@@ -1,0 +1,50 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<section class="page-header mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+        <div>
+            <p class="text-uppercase text-muted small mb-1 tracking-wide">Discover stays</p>
+            <h1 class="display-6 mb-1">All Listings</h1>
+            <% if (q) { %>
+                <p class="text-muted mb-0">Showing results for "<%= q %>".</p>
+            <% } else { %>
+                <p class="text-muted mb-0">Browse hand-picked stays, compare prices, and jump into a listing.</p>
+            <% } %>
+        </div>
+        <% if (currentUser && currentUser.role === 'admin') { %>
+        <a class="btn btn-danger btn-lg" href="/listings/new">Add Listing</a>
+        <% } %>
+    </div>
+</section>
+
+<% if (!allListings.length) { %>
+    <div class="card empty-state shadow-sm">
+        <div class="card-body p-5 text-center">
+            <h2 class="h4 mb-2">No listings yet</h2>
+            <p class="text-muted mb-4">No stays are listed right now. Check back soon!</p>
+            <% if (currentUser && currentUser.role === 'admin') { %>
+            <a class="btn btn-danger" href="/listings/new">Create Listing</a>
+            <% } %>
+        </div>
+    </div>
+<% } else { %>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        <% for (let listing of allListings) { %>
+            <div class="col">
+                <article class="card listing-card h-100 shadow-sm">
+                        <a href="/listings/<%= listing._id %>" class="listing-card-link" aria-label="View details for <%= listing.title %>">
+                            <div class="card-img-top listing-thumb" role="img" aria-label="<%= listing.title %>" style="background-image: url('<%= listing.image && listing.image.url ? listing.image.url + (listing.image.url.includes('?') ? '&v=' : '?v=') + Date.now() : '' %>')"></div>
+                        </a>
+                    <div class="card-body d-flex flex-column">
+                        <p class="listing-kicker text-uppercase text-muted small mb-1">Stay</p>
+                        <h2 class="h5 card-title mb-2"><a class="listing-title-link" href="/listings/<%= listing._id %>"><%= listing.title %></a></h2>
+                        <p class="card-text text-muted mb-3"><%= listing.location %>, <%= listing.country %></p>
+                        <div class="mt-auto d-flex justify-content-between align-items-center gap-3">
+                            <p class="card-text fw-semibold mb-0">&#8377; <%= listing.price.toLocaleString("en-IN") %> <span class="text-muted fw-normal">/ night</span></p>
+                            <a class="btn btn-outline-danger btn-sm" href="/listings/<%= listing._id %>">View details</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        <% } %>
+    </div>
+<% } %>

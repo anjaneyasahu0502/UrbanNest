@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: urbannest-backend
+    runtime: node
+    region: singapore          # closest to India
+    plan: free
+    rootDir: .                 # this file lives inside backend/
+    buildCommand: npm install
+    startCommand: node app.js
+    healthCheckPath: /listings  # Render pings this to confirm the app is up
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: MONGO_URL
+        sync: false            # paste Atlas connection string in Render dashboard
+      - key: SESSION_SECRET
+        generateValue: true    # Render auto-generates a secure random value
+      - key: FRONTEND_ORIGIN
+        # After first deploy, update this to your actual Render URL:
+        # e.g. https://urbannest-backend.onrender.com
+        # For an SSR app this can be left blank — browser never makes cross-origin calls
+        value: ""
+      - key: XAI_API_KEY
+        sync: false
+      - key: XAI_MODEL
+        value: grok-beta
+      - key: GROQ_API_KEY
+        sync: false            # get free key at console.groq.com
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USER
+        sync: false            # your Gmail address
+      - key: EMAIL_PASSWORD
+        sync: false            # your Gmail app password (not your account password)
+      - key: PEXELS_API_KEY
+        sync: false
+      - key: STRIPE_SECRET
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_KEY
+        sync: false
+      - key: CLOUDINARY_SECRET
+        sync: false
+      # FCE_API_KEY is only needed for E2E tests — omit in production

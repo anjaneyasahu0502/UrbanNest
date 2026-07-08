@@ -1,0 +1,17 @@
+{
+  "name": "urbannest-workspace",
+  "version": "2.0.0",
+  "description": "UrbanNest monorepo workspace — run backend and frontend together",
+  "private": true,
+  "scripts": {
+    "backend": "cd backend && npm start",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "start": "cd backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

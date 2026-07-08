@@ -1,0 +1,12 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<section class="error-page card shadow-sm p-4 mx-auto">
+    <h1 class="h3 mb-3"><%= statusCode %> - <%= message %></h1>
+    <% if (err && err.errors) { %>
+        <ul class="mb-4">
+            <% Object.values(err.errors).forEach((item) => { %>
+                <li><%= item.message %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+    <a class="btn btn-primary" href="/listings">Back to listings</a>
+</section>

@@ -1,0 +1,99 @@
+<% layout('/layouts/boilerplate.ejs') %>
+<section class="card shadow-sm p-4 mx-auto auth-page">
+  <h1 class="h3 mb-3">Verify Your Email</h1>
+  <p class="text-muted mb-4">
+    We've sent a 6-digit verification code to your email address. Please enter it below to complete your registration.
+  </p>
+  
+  <% if (error && error.length) { %>
+    <div class="alert alert-danger"><%= error[0] %></div>
+  <% } %>
+  
+  <% if (success && success.length) { %>
+    <div class="alert alert-success"><%= success[0] %></div>
+  <% } %>
+  
+  <form action="/auth/verify-otp" method="POST">
+    <div class="mb-3">
+      <label class="form-label">
+        <i class="fas fa-envelope"></i> Email Verification Code
+      </label>
+      <input 
+        name="emailOTP" 
+        class="form-control form-control-lg text-center" 
+        required 
+        pattern="[0-9]{6}" 
+        maxlength="6"
+        placeholder="000000"
+        style="letter-spacing: 10px; font-size: 1.5rem;"
+        autocomplete="off"
+      >
+      <small class="form-text text-muted">Enter the 6-digit code sent to your email</small>
+    </div>
+    
+    <button class="btn btn-danger w-100 mb-3" type="submit">
+      <i class="fas fa-check-circle"></i> Verify & Complete Registration
+    </button>
+  </form>
+  
+  <form action="/auth/resend-otp" method="POST" class="text-center">
+    <p class="text-muted mb-2">Didn't receive the code?</p>
+    <button class="btn btn-outline-secondary btn-sm" type="submit">
+      <i class="fas fa-redo"></i> Resend Code
+    </button>
+  </form>
+  
+  <hr class="mt-4">
+  <p class="text-center mb-0 text-muted small">
+    <i class="fas fa-clock"></i> Code expires in 10 minutes
+  </p>
+  <p class="text-center mb-0 text-muted small mt-2">
+    <i class="fas fa-shield-alt"></i> All digits in the code are unique
+  </p>
+</section>
+
+<style>
+  .auth-page {
+    max-width: 500px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  input[type="text"]::-webkit-inner-spin-button,
+  input[type="text"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+</style>
+
+<script>
+  // Auto-focus and input handling for OTP
+  document.addEventListener('DOMContentLoaded', function() {
+    const otpInput = document.querySelector('input[pattern="[0-9]{6}"]');
+    
+    if (otpInput) {
+      // Auto-focus on load
+      otpInput.focus();
+      
+      // Only allow numbers
+      otpInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+      });
+      
+      // Handle paste
+      otpInput.addEventListener('paste', function(e) {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
+        this.value = pastedData.substring(0, 6);
+      });
+      
+      // Auto-submit when 6 digits entered (optional)
+      otpInput.addEventListener('input', function(e) {
+        if (this.value.length === 6) {
+          // Optionally auto-submit the form
+          // this.form.submit();
+        }
+      });
+    }
+  });
+</script>

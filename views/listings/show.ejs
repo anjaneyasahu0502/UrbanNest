@@ -1,0 +1,278 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<section class="listing-detail-hero card shadow-sm overflow-hidden mb-4">
+    <div class="row g-0">
+        <div class="col-lg-7">
+            <img class="img-fluid listing-hero" src="<%= listing.image && listing.image.url ? listing.image.url + (listing.image.url.includes('?') ? '&v=' : '?v=') + Date.now() : '' %>" alt="<%= listing.title %>">
+        </div>
+        <div class="col-lg-5">
+            <div class="card-body p-4 p-lg-5 h-100 d-flex flex-column">
+                <p class="text-uppercase text-muted small mb-2 tracking-wide">Listing details</p>
+                <h1 class="display-6 mb-2"><%= listing.title %></h1>
+                <p class="text-muted mb-3"><%= listing.location %>, <%= listing.country %></p>
+                <p class="fs-3 fw-semibold mb-3">&#8377; <%= listing.price.toLocaleString("en-IN") %> <span class="text-muted fs-6 fw-normal">/ night</span></p>
+                <p class="mb-4 text-body-secondary"><%= listing.description %></p>
+
+                <div class="d-flex gap-2 flex-wrap mt-auto">
+                    <% if (currentUser && currentUser.role === 'admin') { %>
+                        <a class="btn btn-primary" href="/listings/<%=listing._id %>/edit">Edit Listing</a>
+                        <form method="POST" action="/listings/<%=listing._id%>?_method=DELETE">
+                            <button class="btn btn-outline-danger" type="submit" aria-label="Delete listing <%= listing.title %>">Delete</button>
+                        </form>
+                    <% } %>
+                    <a class="btn btn-outline-secondary" href="/listings">Back to listings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <% if (currentUser && currentUser.role !== 'admin') { %>
+        <div class="card shadow-sm h-100">
+            <div class="card-body p-4">
+                <h2 class="h4 mb-3">Book this listing</h2>
+                <form action="/listings/<%= listing._id %>/bookings" method="POST" class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label" for="checkIn">Check-In</label>
+                        <input id="checkIn" name="checkIn" class="form-control" type="date" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="checkOut">Check-Out</label>
+                        <input id="checkOut" name="checkOut" class="form-control" type="date" required>
+                    </div>
+                    
+                    <!-- Fare Breakdown -->
+                    <div id="fareBreakdown" class="col-12 d-none">
+                        <div class="card bg-light border-0 p-3 mt-2">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted small" id="nightsLabel">₹<%= listing.price.toLocaleString("en-IN") %> x 0 nights</span>
+                                <span class="small" id="baseTotal">₹0</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted small" id="gstLabel">GST (0%)</span>
+                                <span class="small" id="gstAmount">₹0</span>
+                            </div>
+                            <hr class="my-1">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Total Fare</span>
+                                <span class="fw-bold" id="finalAmount">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 d-grid mt-4">
+                        <button class="btn btn-danger btn-lg" type="submit">Book now</button>
+                    </div>
+                    <p class="text-center text-muted small mt-2">You won't be charged yet</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const checkInInput = document.getElementById('checkIn');
+        const checkOutInput = document.getElementById('checkOut');
+        const fareBreakdown = document.getElementById('fareBreakdown');
+        const nightsLabel = document.getElementById('nightsLabel');
+        const baseTotalEl = document.getElementById('baseTotal');
+        const gstLabel = document.getElementById('gstLabel');
+        const gstAmountEl = document.getElementById('gstAmount');
+        const finalAmountEl = document.getElementById('finalAmount');
+
+        const pricePerNight = <%= listing.price %>;
+
+        // Set min dates
+        const today = new Date().toISOString().split('T')[0];
+        checkInInput.setAttribute('min', today);
+
+        function updateFare() {
+            const start = new Date(checkInInput.value);
+            const end = new Date(checkOutInput.value);
+
+            if (checkInInput.value && checkOutInput.value && start < end) {
+                const diffTime = Math.abs(end - start);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                const baseTotal = pricePerNight * diffDays;
+                
+                // GST Logic
+                let gstRate = 0;
+                if (pricePerNight > 7500) gstRate = 0.18;
+                else if (pricePerNight >= 1001) gstRate = 0.05;
+
+                const gstAmount = baseTotal * gstRate;
+                const finalTotal = baseTotal + gstAmount;
+
+                nightsLabel.innerText = `${pricePerNight.toLocaleString('en-IN')} x ${diffDays} nights`;
+                baseTotalEl.innerText = `₹${baseTotal.toLocaleString('en-IN')}`;
+                gstLabel.innerText = `GST (${gstRate * 100}%)`;
+                gstAmountEl.innerText = `₹${gstAmount.toLocaleString('en-IN')}`;
+                finalAmountEl.innerText = `₹${finalTotal.toLocaleString('en-IN')}`;
+                
+                fareBreakdown.classList.remove('d-none');
+            } else {
+                fareBreakdown.classList.add('d-none');
+            }
+        }
+
+        checkInInput.addEventListener('change', () => {
+            checkOutInput.setAttribute('min', checkInInput.value);
+            updateFare();
+        });
+        checkOutInput.addEventListener('change', updateFare);
+    </script>
+    <% } else if (currentUser && currentUser.role === 'admin') { %>
+        <div class="card shadow-sm h-100 bg-light border-0">
+            <div class="card-body p-4 text-center">
+                <i class="fas fa-user-shield fa-3x text-primary mb-3"></i>
+                <h2 class="h4">Admin Mode</h2>
+                <p class="text-muted">As an Admin, you can manage this listing using the Edit/Delete buttons above. Booking is reserved for users.</p>
+            </div>
+        </div>
+    <% } %>
+        <div class="card shadow-sm h-100">
+            <div class="card-body p-4">
+                <% if (!currentUser) { %>
+                    <div class="text-center py-4">
+                        <i class="fas fa-lock fa-2x text-muted mb-3"></i>
+                        <p class="text-muted mb-2">Sign in to leave a review.</p>
+                        <a href="/auth/login" class="btn btn-sm btn-urbannest">Sign In</a>
+                    </div>
+                <% } else if (canReview) { %>
+                    <h2 class="h4 mb-1">Leave a Review</h2>
+                    <p class="text-muted small mb-3">
+                        <i class="fas fa-check-circle text-success me-1"></i>
+                        Verified stay — you stayed here!
+                    </p>
+                    <form action="/listings/<%= listing._id %>/reviews" method="POST" class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Rating</label>
+                            <div class="star-selector mb-1" id="starSelector">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                    <span class="star-btn" data-value="<%= i %>">★</span>
+                                <% } %>
+                            </div>
+                            <input type="hidden" id="ratingInput" name="review[rating]" value="" required>
+                            <small class="text-muted" id="ratingLabel">Click to rate</small>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold" for="review-comment">Your Experience</label>
+                            <textarea class="form-control" id="review-comment" name="review[comment]" rows="3" minlength="10" placeholder="Share what you liked, what could be better..." required></textarea>
+                        </div>
+                        <div class="col-12 d-grid d-md-flex justify-content-md-end">
+                            <button class="btn btn-urbannest px-4" type="submit">Submit Review</button>
+                        </div>
+                    </form>
+                <% } else if (alreadyReviewed) { %>
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-2x text-success mb-3"></i>
+                        <p class="text-muted mb-0">You've already reviewed this listing. Thanks!</p>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-check fa-2x text-muted mb-3"></i>
+                        <p class="text-muted mb-0">Only guests who completed a paid stay can review this listing.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="mt-4">
+    <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+        <div>
+            <h2 class="h4 mb-0">Reviews</h2>
+            <% if (listing.reviews && listing.reviews.length) {
+                const avg = (listing.reviews.reduce((s, r) => s + r.rating, 0) / listing.reviews.length).toFixed(1);
+            %>
+                <span class="text-muted small">
+                    <span class="text-warning">★</span> <%= avg %> avg ·
+                    <%= listing.reviews.length %> review<%= listing.reviews.length !== 1 ? 's' : '' %>
+                </span>
+            <% } %>
+        </div>
+    </div>
+    <% if (listing.reviews && listing.reviews.length) { %>
+        <div class="row row-cols-1 row-cols-md-2 g-3">
+            <% for (let review of listing.reviews) { %>
+                <div class="col">
+                    <div class="card h-100 shadow-sm review-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                                <div>
+                                    <div class="star-display mb-1">
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <span style="color: <%= i <= review.rating ? '#FF9933' : '#dee2e6' %>; font-size: 1.1rem;">★</span>
+                                        <% } %>
+                                    </div>
+                                    <p class="mb-0 text-muted small">
+                                        by <strong><%= review.author ? review.author.username : 'Anonymous' %></strong>
+                                        · <%= new Date(review.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) %>
+                                    </p>
+                                </div>
+                                <span class="badge" style="background: #D4EDDA; color: #138808; font-size: 0.7rem;">
+                                    <i class="fas fa-check-circle me-1"></i> Verified Stay
+                                </span>
+                            </div>
+                            <p class="mb-3 text-body-secondary"><%= review.comment %></p>
+                            <% if (currentUser && (review.author && String(currentUser._id) === String(review.author._id) || currentUser.role === 'admin')) { %>
+                                <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    <% } else { %>
+        <div class="card shadow-sm empty-state">
+            <div class="card-body p-4">
+                <p class="text-muted mb-0">No reviews yet. Book a stay to be the first!</p>
+            </div>
+        </div>
+    <% } %>
+</section>
+
+<style>
+    .star-selector .star-btn {
+        font-size: 2rem;
+        color: #dee2e6;
+        cursor: pointer;
+        transition: color 0.15s ease;
+    }
+    .star-selector .star-btn.active,
+    .star-selector .star-btn.hovered {
+        color: #FF9933;
+    }
+</style>
+
+<script>
+    // Interactive star rating selector
+    const starBtns = document.querySelectorAll('.star-btn');
+    const ratingInput = document.getElementById('ratingInput');
+    const ratingLabel = document.getElementById('ratingLabel');
+    const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+
+    if (starBtns.length) {
+        starBtns.forEach(btn => {
+            btn.addEventListener('mouseenter', function () {
+                const val = +this.dataset.value;
+                starBtns.forEach(s => s.classList.toggle('hovered', +s.dataset.value <= val));
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                starBtns.forEach(s => s.classList.remove('hovered'));
+            });
+
+            btn.addEventListener('click', function () {
+                const val = +this.dataset.value;
+                ratingInput.value = val;
+                ratingLabel.textContent = labels[val];
+                starBtns.forEach(s => s.classList.toggle('active', +s.dataset.value <= val));
+            });
+        });
+    }
+</script>

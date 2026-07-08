@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="UrbanNest">
+  <!-- Indian flag colors background -->
+  <rect width="64" height="64" rx="16" fill="#FFFFFF"/>
+  <!-- Saffron accent -->
+  <rect width="64" height="8" rx="16 16 0 0" fill="#FF9933"/>
+  <!-- Green accent -->
+  <rect y="56" width="64" height="8" rx="0 0 16 16" fill="#138808"/>
+  <!-- Building icon in navy -->
+  <path fill="#000080" d="M32 12 14 24h4v24c0 1.1.9 2 2 2h8V38h8v12h8c1.1 0 2-.9 2-2V24h4L32 12z"/>
+  <!-- Windows -->
+  <rect x="20" y="30" width="4" height="4" fill="#FF9933" rx="1"/>
+  <rect x="28" y="30" width="4" height="4" fill="#FF9933" rx="1"/>
+  <rect x="36" y="30" width="4" height="4" fill="#FF9933" rx="1"/>
+</svg>

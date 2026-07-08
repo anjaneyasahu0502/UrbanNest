@@ -1,0 +1,178 @@
+<% layout('/layouts/boilerplate.ejs') %>
+<section class="container py-4">
+  <h1 class="h3 mb-4">Host Bookings Calendar</h1>
+
+  <% if (!listingCalendars.length) { %>
+    <p class="text-muted">You don't have any listings yet.</p>
+  <% } %>
+
+  <% listingCalendars.forEach(entry => { %>
+    <div class="card mb-4">
+      <div class="card-body">
+        <h4><a href="/listings/<%= entry.listing._id %>"><%= entry.listing.title %></a></h4>
+        <p class="text-muted mb-3"><%= entry.listing.location || '' %></p>
+        <div class="calendar-legend mb-3" aria-label="Calendar legend">
+          <span class="legend-item"><span class="legend-swatch legend-available"></span> Available</span>
+          <span class="legend-item"><span class="legend-swatch legend-booked"></span> Booked</span>
+        </div>
+        <div class="host-calendar" data-listing-id="<%= entry.listing._id %>" data-offset="0">
+          <div class="mb-2">
+            <button class="btn btn-sm btn-outline-secondary btn-prev">&larr; Prev</button>
+            <button class="btn btn-sm btn-outline-secondary btn-next">Next &rarr;</button>
+          </div>
+          <div class="d-flex gap-3 flex-wrap months">
+            <% entry.months.forEach(m => { %>
+              <div class="calendar border p-2">
+                <div class="text-center fw-bold"><%= new Date(m.year, m.month, 1).toLocaleString(undefined, { month: 'long', year: 'numeric' }) %></div>
+                <table class="table table-sm mb-0">
+                  <thead>
+                    <tr>
+                      <th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% m.grid.forEach(week => { %>
+                      <tr>
+                        <% week.forEach(cell => { %>
+                          <% if (!cell) { %>
+                            <td></td>
+                          <% } else { %>
+                            <td data-iso="<%= cell.iso %>" class="calendar-cell <%= cell.booked ? 'booked-cell' : '' %>">
+                              <% if (cell.booked) { %>
+                                <button
+                                  type="button"
+                                  class="calendar-day booked-day"
+                                  data-bs-toggle="tooltip"
+                                  data-bs-placement="top"
+                                  title="Booked date. Click or press Enter for details."
+                                  aria-label="Booked date <%= cell.iso %>. Press Enter for booking details."
+                                ><%= cell.date.getDate() %></button>
+                              <% } else { %>
+                                <span class="calendar-day available-day" aria-hidden="true"><%= cell.date.getDate() %></span>
+                              <% } %>
+                            </td>
+                          <% } %>
+                        <% }) %>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function renderMonths(months){
+      return months.map(m => {
+        const title = new Date(m.year, m.month, 1).toLocaleString(undefined, { month: 'long', year: 'numeric' });
+        const rows = m.grid.map(week => {
+          const tds = week.map(cell => {
+            if (!cell) return '<td></td>';
+            if (cell.booked) {
+              return `<td data-iso="${cell.iso}" class="calendar-cell booked-cell"><button type="button" class="calendar-day booked-day" data-bs-toggle="tooltip" data-bs-placement="top" title="Booked date. Click or press Enter for details." aria-label="Booked date ${cell.iso}. Press Enter for booking details.">${cell.day}</button></td>`;
+            }
+            return `<td data-iso="${cell.iso}" class="calendar-cell"><span class="calendar-day available-day" aria-hidden="true">${cell.day}</span></td>`;
+          }).join('');
+          return `<tr>${tds}</tr>`;
+        }).join('');
+        return `<div class="calendar-card"><div class="calendar-title text-center fw-bold">${title}</div><table class="table table-sm mb-0 calendar-table"><thead><tr><th scope="col">Su</th><th scope="col">Mo</th><th scope="col">Tu</th><th scope="col">We</th><th scope="col">Th</th><th scope="col">Fr</th><th scope="col">Sa</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      }).join('');
+    }
+
+    function initTooltips(scope) {
+      if (!window.bootstrap || !bootstrap.Tooltip) return;
+      scope.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+        bootstrap.Tooltip.getOrCreateInstance(el);
+      });
+    }
+
+    document.querySelectorAll('.host-calendar').forEach(wrapper => {
+      const listingId = wrapper.dataset.listingId;
+      const monthsContainer = wrapper.querySelector('.months');
+      let offset = parseInt(wrapper.dataset.offset || '0', 10);
+
+      // load initial bookings map from server-rendered data if present
+      if (!window.__hostBookings) window.__hostBookings = {};
+      if (window.__hostBookings[listingId]) {
+        wrapper._bookingsMap = window.__hostBookings[listingId];
+      }
+
+      function attachHandlers() {
+        monthsContainer.querySelectorAll('.booked-day').forEach(button => {
+          button.addEventListener('click', () => {
+            const td = button.closest('td');
+            const iso = td && td.dataset.iso;
+            const map = wrapper._bookingsMap || window.__hostBookings[listingId] || {};
+            const info = map[iso];
+            if (!info) return;
+            const modalEl = document.getElementById('bookingDetailModal');
+            modalEl.querySelector('.modal-title').textContent = `Booking by ${info.guestName}`;
+            modalEl.querySelector('.bd-iso').textContent = iso;
+            modalEl.querySelector('.bd-range').textContent = new Date(info.checkIn).toLocaleDateString() + ' - ' + new Date(info.checkOut).toLocaleDateString();
+            modalEl.querySelector('.bd-guest').textContent = info.guestName;
+            modalEl.querySelector('.bd-price').textContent = (info.totalPrice || 0).toLocaleString();
+            modalEl.querySelector('.bd-paid').textContent = info.paid ? 'Yes' : 'No';
+            const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            bsModal.show();
+          });
+        });
+        initTooltips(monthsContainer);
+      }
+
+      // attach handlers to initial server-rendered cells
+      attachHandlers();
+
+      wrapper.querySelector('.btn-prev').addEventListener('click', async () => {
+        offset -= 1;
+        const resp = await fetch(`/bookings/host/calendar?listingId=${listingId}&offset=${offset}`);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        monthsContainer.innerHTML = renderMonths(data.months);
+        wrapper._bookingsMap = data.bookingsByDate || {};
+        attachHandlers();
+        wrapper.dataset.offset = offset;
+      });
+
+      wrapper.querySelector('.btn-next').addEventListener('click', async () => {
+        offset += 1;
+        const resp = await fetch(`/bookings/host/calendar?listingId=${listingId}&offset=${offset}`);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        monthsContainer.innerHTML = renderMonths(data.months);
+        wrapper._bookingsMap = data.bookingsByDate || {};
+        attachHandlers();
+        wrapper.dataset.offset = offset;
+      });
+
+      initTooltips(wrapper);
+    });
+  });
+</script>
+
+<!-- Booking detail modal -->
+<div class="modal fade" id="bookingDetailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Date:</strong> <span class="bd-iso"></span></p>
+        <p><strong>Range:</strong> <span class="bd-range"></span></p>
+        <p><strong>Guest:</strong> <span class="bd-guest"></span></p>
+        <p><strong>Price:</strong> <span class="bd-price"></span></p>
+        <p><strong>Paid:</strong> <span class="bd-paid"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

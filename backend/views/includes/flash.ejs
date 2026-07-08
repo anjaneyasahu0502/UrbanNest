@@ -1,0 +1,18 @@
+<% const _success = (typeof success !== 'undefined') ? success : []; %>
+<% const _error   = (typeof error   !== 'undefined') ? error   : []; %>
+<% if (_success && _success.length) { %>
+  <div class="container mt-3">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= _success[0] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+<% } %>
+<% if (_error && _error.length) { %>
+  <div class="container mt-3">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <%= _error[0] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+<% } %>

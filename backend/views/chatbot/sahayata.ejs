@@ -1,0 +1,474 @@
+<% layout('/layouts/boilerplate.ejs') %>
+
+<div class="container-fluid py-4" style="max-width: 1400px;">
+  <div class="row">
+    <!-- Chatbot Header -->
+    <div class="col-12 mb-4">
+      <div class="card border-0 shadow-sm" style="background: linear-gradient(to right, #FF9933 0%, #FFFFFF 33%, #FFFFFF 66%, #138808 100%); border-radius: 15px;">
+        <div class="card-body text-center py-4">
+          <h1 class="display-4 fw-bold mb-2" style="color: #000080;">
+            🙏 Sahayata (सहायता)
+          </h1>
+          <p class="lead mb-0 fw-semibold" style="color: #333;">
+            Your AI Travel Companion for Incredible India
+          </p>
+          <p class="text-muted small mb-0">Powered by Groq AI • Ask me anything about Indian cities, culture, food & more!</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <!-- Chat Container -->
+      <div class="card border-0 shadow-lg" style="height: 650px; border-radius: 20px; overflow: hidden;">
+        <div class="card-header text-white py-3" style="background: linear-gradient(135deg, #FF9933, #FF6B35); border-radius: 20px 20px 0 0;">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <div class="avatar-circle me-3">
+                <img src="https://cdn.iconscout.com/icon/premium/png-512-thumb/chatbot-icon-svg-download-png-4152074.png?f=webp&w=512" alt="Sahayata AI">
+              </div>
+              <div>
+                <h5 class="mb-0 fw-bold">Sahayata Assistant</h5>
+                <small class="opacity-75">
+                  <span class="status-dot"></span> Online • Ready to help
+                </small>
+              </div>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-light" onclick="clearChat()" title="Clear chat">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="card-body overflow-auto p-4" id="chatMessages" style="height: 500px; background: linear-gradient(to bottom, #FFF5E6, #FFFFFF);">
+          <!-- Welcome Message -->
+          <div class="message-container mb-3">
+            <div class="d-flex align-items-start">
+              <div class="avatar-small me-2">
+                <img src="https://cdn.iconscout.com/icon/premium/png-512-thumb/chatbot-icon-svg-download-png-4152074.png?f=webp&w=512" alt="Sahayata AI">
+              </div>
+              <div class="message bot-message">
+                <strong>Namaste! 🙏</strong><br><br>
+                I'm <strong>Sahayata</strong>, your AI guide to India's vibrant cities and rich culture. I can help you with:
+                <ul class="mb-2 mt-2" style="line-height: 1.8;">
+                  <li>🏙️ <strong>Cities:</strong> Information about major urban centers</li>
+                  <li>🍛 <strong>Food:</strong> Local cuisine, restaurants & street food</li>
+                  <li>🏢 <strong>Business:</strong> IT hubs, tech parks & industries</li>
+                  <li>🎭 <strong>Culture:</strong> Tourist attractions & heritage sites</li>
+                  <li>🚗 <strong>Travel:</strong> Transportation & connectivity tips</li>
+                  <li>🛍️ <strong>Shopping:</strong> Markets, malls & local stores</li>
+                </ul>
+                <p class="mb-0 mt-2"><strong>What would you like to know about India?</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="card-footer bg-white border-0 p-3" style="border-radius: 0 0 20px 20px;">
+          <form id="chatForm" class="d-flex gap-2">
+            <input 
+              type="text" 
+              id="messageInput" 
+              class="form-control form-control-lg" 
+              placeholder="Ask about cities, food, places to visit, IT hubs..."
+              autocomplete="off"
+              required
+              style="border-radius: 25px; border: 2px solid #FF9933;"
+            >
+            <button type="submit" class="btn btn-lg px-4" style="background: linear-gradient(135deg, #FF9933, #FF6B35); color: white; border: none; border-radius: 25px; min-width: 60px;">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </form>
+          <div class="text-center mt-2">
+            <small class="text-muted">
+              <i class="fas fa-shield-alt"></i> Powered by Groq AI • <i class="fas fa-heart" style="color: #FF9933;"></i> Made in India
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggestions Sidebar -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm mb-3" style="border-radius: 15px;">
+        <div class="card-header text-white" style="background: linear-gradient(135deg, #138808, #0D5E06); border-radius: 15px 15px 0 0;">
+          <h5 class="mb-0 fw-bold">
+            <i class="fas fa-lightbulb"></i> Quick Questions
+          </h5>
+        </div>
+        <div class="card-body" id="suggestionsContainer" style="max-height: 400px; overflow-y: auto;">
+          <div class="text-center py-3">
+            <div class="spinner-border" style="color: #FF9933;" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- India Facts Card -->
+      <div class="card border-0 shadow-sm" style="border-radius: 15px; background: linear-gradient(135deg, #FFF5E6, #FFE6CC);">
+        <div class="card-body">
+          <h6 class="fw-bold mb-3" style="color: #FF9933;">
+            <i class="fas fa-info-circle"></i> Incredible India Facts
+          </h6>
+          <div id="indiaFact" class="small" style="line-height: 1.8;">
+            <p class="mb-2">🏛️ <strong>38</strong> UNESCO World Heritage Sites</p>
+            <p class="mb-2">🍛 Over <strong>1000</strong> varieties of dishes</p>
+            <p class="mb-2">💻 Bengaluru: <strong>"Silicon Valley of India"</strong></p>
+            <p class="mb-2">🗣️ <strong>22</strong> officially recognized languages</p>
+            <p class="mb-0">🎭 <strong>5000+</strong> years of rich cultural history</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .message-container {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message {
+    padding: 14px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    word-wrap: break-word;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  .bot-message {
+    background: white;
+    border: 2px solid #FF9933;
+    box-shadow: 0 3px 10px rgba(255, 153, 51, 0.15);
+  }
+
+  .user-message {
+    background: linear-gradient(135deg, #FF9933, #FF6B35);
+    color: white;
+    margin-left: auto;
+    box-shadow: 0 3px 10px rgba(255, 153, 51, 0.25);
+  }
+
+  .avatar-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(255, 153, 51, 0.2);
+    overflow: hidden;
+    padding: 5px;
+    border: 2px solid #FF9933;
+  }
+
+  .avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .avatar-small {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+    border: 1px solid #FF9933;
+  }
+
+  .avatar-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4CAF50;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .suggestion-btn {
+    transition: all 0.3s ease;
+    border: 2px solid #FF9933;
+    background: white;
+    color: #FF9933;
+    font-size: 0.85rem;
+  }
+
+  .suggestion-btn:hover {
+    background: linear-gradient(135deg, #FF9933, #FF6B35);
+    color: white;
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(255, 153, 51, 0.3);
+    border-color: #FF6B35;
+  }
+
+  #chatMessages::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  #chatMessages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  #chatMessages::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FF9933, #138808);
+    border-radius: 10px;
+  }
+
+  #chatMessages::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #FF6B35, #0D5E06);
+  }
+
+  .typing-indicator {
+    display: inline-block;
+  }
+
+  .typing-indicator span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #FF9933;
+    margin: 0 3px;
+    animation: typing 1.4s infinite;
+  }
+
+  .typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-12px); }
+  }
+
+  #suggestionsContainer::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #suggestionsContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  #suggestionsContainer::-webkit-scrollbar-thumb {
+    background: #138808;
+    border-radius: 10px;
+  }
+</style>
+
+<script>
+  const chatMessages = document.getElementById('chatMessages');
+  const chatForm = document.getElementById('chatForm');
+  const messageInput = document.getElementById('messageInput');
+  const suggestionsContainer = document.getElementById('suggestionsContainer');
+
+  // Load suggestions
+  async function loadSuggestions() {
+    try {
+      const response = await fetch('/sahayata/suggestions');
+      const data = await response.json();
+      
+      let html = '';
+      data.suggestions.forEach(category => {
+        html += `
+          <div class="mb-3">
+            <h6 class="fw-bold mb-2 small" style="color: #138808;">${category.category}</h6>
+            ${category.questions.map(q => `
+              <button class="btn btn-sm suggestion-btn w-100 mb-2 text-start" onclick="askQuestion(\`${q.replace(/`/g, '\\`')}\`)">
+                <i class="fas fa-comment-dots me-1"></i> ${q}
+              </button>
+            `).join('')}
+          </div>
+        `;
+      });
+      
+      suggestionsContainer.innerHTML = html;
+    } catch (error) {
+      console.error('Error loading suggestions:', error);
+      suggestionsContainer.innerHTML = '<p class="text-muted small text-center">Unable to load suggestions</p>';
+    }
+  }
+
+  // Add message to chat
+  function addMessage(message, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message-container mb-3';
+    
+    if (isUser) {
+      messageDiv.innerHTML = `
+        <div class="d-flex align-items-start justify-content-end">
+          <div class="message user-message">
+            ${escapeHtml(message)}
+          </div>
+          <div class="avatar-small ms-2" style="background: #FF9933; color: white; font-size: 1.2rem;">👤</div>
+        </div>
+      `;
+    } else {
+      messageDiv.innerHTML = `
+        <div class="d-flex align-items-start">
+          <div class="avatar-small me-2">
+            <img src="https://cdn.iconscout.com/icon/premium/png-512-thumb/chatbot-icon-svg-download-png-4152074.png?f=webp&w=512" alt="Sahayata AI">
+          </div>
+          <div class="message bot-message">
+            <div class="fw-bold mb-1 small" style="color: #FF9933;">Sahayata Chatbot</div>
+            ${message}
+          </div>
+        </div>
+      `;
+    }
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // Show typing indicator
+  function showTyping() {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message-container mb-3';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+      <div class="d-flex align-items-start">
+        <div class="avatar-small me-2">
+          <img src="https://cdn.iconscout.com/icon/premium/png-512-thumb/chatbot-icon-svg-download-png-4152074.png?f=webp&w=512" alt="Sahayata AI">
+        </div>
+        <div class="message bot-message">
+          <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    `;
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // Remove typing indicator
+  function hideTyping() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+      typingIndicator.remove();
+    }
+  }
+
+  // Escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Format bot response (convert markdown-like syntax)
+  function formatResponse(text) {
+    // Convert **bold** to <strong>
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Convert *italic* to <em>
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    // Convert line breaks
+    text = text.replace(/\n\n/g, '<br><br>');
+    text = text.replace(/\n/g, '<br>');
+    // Convert bullet points
+    text = text.replace(/^- (.+)$/gm, '• $1');
+    // Convert numbered lists
+    text = text.replace(/^(\d+)\. (.+)$/gm, '<strong>$1.</strong> $2');
+    return text;
+  }
+
+  // Send message
+  async function sendMessage(message) {
+    if (!message.trim()) return;
+
+    // Add user message
+    addMessage(message, true);
+    messageInput.value = '';
+    messageInput.focus();
+
+    // Show typing indicator
+    showTyping();
+
+    try {
+      const response = await fetch('/sahayata/ask', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+      hideTyping();
+
+      if (data.error) {
+        addMessage('⚠️ ' + data.response, false);
+      } else {
+        addMessage(formatResponse(data.response), false);
+      }
+    } catch (error) {
+      hideTyping();
+      addMessage('❌ Sorry, I encountered an error. Please try again. 🙏', false);
+      console.error('Error:', error);
+    }
+  }
+
+  // Ask suggested question
+  function askQuestion(question) {
+    messageInput.value = question;
+    sendMessage(question);
+  }
+
+  // Clear chat
+  function clearChat() {
+    if (confirm('Clear all messages?')) {
+      const welcomeMessage = chatMessages.querySelector('.message-container');
+      chatMessages.innerHTML = '';
+      if (welcomeMessage) {
+        chatMessages.appendChild(welcomeMessage.cloneNode(true));
+      }
+    }
+  }
+
+  // Form submit
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    sendMessage(messageInput.value);
+  });
+
+  // Load suggestions on page load
+  loadSuggestions();
+
+  // Focus input on load
+  messageInput.focus();
+</script>

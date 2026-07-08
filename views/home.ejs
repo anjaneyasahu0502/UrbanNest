@@ -1,0 +1,220 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<section class="urbannest-hero position-relative overflow-hidden mb-4">
+    <div class="urbannest-hero-bg"></div>
+    <div class="row align-items-center g-4 position-relative">
+        <div class="col-lg-7">
+            <div class="hero-badge mb-3">
+                <span class="badge india-badge">
+                    <i class="fas fa-flag-india me-1"></i> Made in India 🇮🇳
+                </span>
+            </div>
+            <h1 class="display-4 fw-bold mb-3 hero-title">
+                Welcome to <span class="urbannest-gradient">UrbanNest</span>
+            </h1>
+            <p class="lead mb-4 hero-subtitle">
+                Discover premium urban accommodations across India's vibrant cities. From Bengaluru's tech hubs to Mumbai's business districts, find your perfect nest in the heart of urban India.
+            </p>
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                <a href="/listings" class="btn btn-urbannest btn-lg shadow-sm">
+                    <i class="fas fa-building me-2"></i> Browse Properties
+                </a>
+                <a href="/listings/new" class="btn btn-outline-urbannest btn-lg">
+                    <i class="fas fa-plus-circle me-2"></i> List Your Property
+                </a>
+                <a href="/sahayata" class="btn btn-sahayata btn-lg shadow-sm">
+                    <i class="fas fa-robot me-2"></i> Ask Sahayata
+                </a>
+            </div>
+            <div class="hero-features">
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt text-success"></i>
+                    <span>Verified Properties</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-bolt text-warning"></i>
+                    <span>Instant Booking</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-headset text-info"></i>
+                    <span>24/7 Support</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card india-card shadow-lg border-0">
+                <div class="card-body p-4 p-md-5">
+                    <div class="india-flag-strip mb-3"></div>
+                    <p class="text-uppercase text-muted small mb-2 tracking-wide">
+                        <i class="fas fa-microchip text-warning"></i> Powered by Modern Frameworks
+                    </p>
+                    <h2 class="h4 mb-3 fw-bold">Built for India's Urban Future</h2>
+                    <div class="d-grid gap-3 mb-4">
+                        <div class="stack-pill stack-mongo"><i class="fa-solid fa-robot me-2"></i> AI-Powered Assistance</div>
+                        <div class="stack-pill stack-express"><i class="fa-solid fa-shield-halved me-2"></i> Secure Ecosystem</div>
+                        <div class="stack-pill stack-node"><i class="fa-solid fa-house-circle-check me-2"></i> Verified Properties</div>
+                        <div class="stack-pill stack-bootstrap"><i class="fa-solid fa-handshake-angle me-2"></i> Dedicated Support</div>
+                    </div>
+                    <div class="sahayata-promo p-3 rounded-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="sahayata-icon me-2">🙏</span>
+                            <strong class="text-dark">Meet Sahayata</strong>
+                        </div>
+                        <p class="small text-muted mb-2">Your AI travel companion for exploring India's cities, cuisine, and culture.</p>
+                        <a href="/sahayata" class="btn btn-sm btn-sahayata w-100">
+                            <i class="fas fa-comments me-1"></i> Chat with Sahayata
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-3 mb-5">
+    <div class="col-6 col-lg-3">
+        <div class="card metric-card metric-card-saffron h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="metric-icon metric-saffron mb-3"><i class="fa-solid fa-building"></i></div>
+                <p class="text-muted mb-1 small fw-semibold">Urban Properties</p>
+                <h3 class="mb-0 fw-bold"><%= stats.listingCount %></h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card metric-card metric-card-blue h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="metric-icon metric-blue mb-3"><i class="fa-solid fa-calendar-check"></i></div>
+                <p class="text-muted mb-1 small fw-semibold">Total Bookings</p>
+                <h3 class="mb-0 fw-bold"><%= stats.bookingCount %></h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card metric-card metric-card-green h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="metric-icon metric-green mb-3"><i class="fa-solid fa-star"></i></div>
+                <p class="text-muted mb-1 small fw-semibold">Guest Reviews</p>
+                <h3 class="mb-0 fw-bold"><%= stats.reviewCount %></h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card metric-card metric-card-purple h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="metric-icon metric-purple mb-3"><i class="fa-solid fa-users"></i></div>
+                <p class="text-muted mb-1 small fw-semibold">Happy Users</p>
+                <h3 class="mb-0 fw-bold"><%= stats.userCount %></h3>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card dashboard-panel border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <p class="text-uppercase text-muted small mb-1 tracking-wide">
+                            <i class="fas fa-sparkles text-warning"></i> Featured Properties
+                        </p>
+                        <h2 class="h4 mb-0 fw-bold">Newest Urban Nests</h2>
+                    </div>
+                    <a href="/listings" class="btn btn-sm btn-urbannest">View all</a>
+                </div>
+
+                <% if (!recentListings.length) { %>
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-home fa-3x mb-3 opacity-25"></i>
+                        <p class="mb-2">No properties listed yet.</p>
+                        <a href="/listings/new" class="btn btn-urbannest btn-sm">List the first property</a>
+                    </div>
+                <% } else { %>
+                    <div class="list-group list-group-flush">
+                        <% recentListings.forEach((listing) => { %>
+                            <a href="/listings/<%= listing._id %>" class="list-group-item list-group-item-action py-3">
+                                <div class="d-flex justify-content-between align-items-center gap-3">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <div class="dashboard-thumb-bg" role="img" aria-label="<%= listing.title %>" style="background-image: url('<%= listing.image && listing.image.url ? listing.image.url + (listing.image.url.includes('?') ? '&v=' : '?v=') + Date.now() : '' %>')"></div>
+                                        <div>
+                                            <h3 class="h6 mb-1"><%= listing.title %></h3>
+                                            <p class="text-muted mb-0 small"><%= listing.location %>, <%= listing.country %></p>
+                                            <p class="text-muted mb-0 small">Owner: <%= listing.author?.username || 'Unknown' %></p>
+                                        </div>
+                                    </div>
+                                    <span class="badge text-bg-light border">&#8377; <%= listing.price.toLocaleString("en-IN") %></span>
+                                </div>
+                            </a>
+                        <% }) %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card dashboard-panel border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <p class="text-uppercase text-muted small mb-1 tracking-wide">
+                    <i class="fas fa-clock text-info"></i> Recent Activity
+                </p>
+                <h2 class="h4 mb-3 fw-bold">Latest Bookings</h2>
+                <% if (!recentBookings.length) { %>
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-alt fa-3x mb-3 opacity-25"></i>
+                        <p class="text-muted mb-0 small">No bookings yet. Once guests start booking, they'll appear here.</p>
+                    </div>
+                <% } else { %>
+                    <div class="vstack gap-3">
+                        <% recentBookings.forEach((booking) => { %>
+                            <div class="border rounded-3 p-3 bg-white">
+                                <div class="d-flex justify-content-between gap-2 mb-2">
+                                    <strong class="text-dark"><%= booking.listing?.title || 'Listing' %></strong>
+                                    <span class="badge text-bg-success-subtle text-success-emphasis"> <%= booking.paid ? 'Paid' : 'Pending' %> </span>
+                                </div>
+                                <div class="small text-muted">
+                                    Guest: <%= booking.user?.username || 'Unknown' %><br>
+                                    <%= new Date(booking.checkIn).toLocaleDateString() %> - <%= new Date(booking.checkOut).toLocaleDateString() %>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="card dashboard-panel border-0 shadow-sm india-culture-card">
+            <div class="card-body p-4">
+                <p class="text-uppercase text-muted small mb-2 tracking-wide">
+                    <i class="fas fa-tools text-primary"></i> Quick Actions
+                </p>
+                <div class="d-grid gap-2">
+                    <a href="/bookings/host" class="btn btn-outline-urbannest">
+                        <i class="fas fa-calendar-alt me-2"></i> Host Calendar
+                    </a>
+                    <a href="/sahayata" class="btn btn-outline-sahayata">
+                        <i class="fas fa-robot me-2"></i> Chat with Sahayata
+                    </a>
+                    <a href="/auth/register" class="btn btn-outline-secondary">
+                        <i class="fas fa-user-plus me-2"></i> Create Account
+                    </a>
+                </div>
+                <hr class="my-3">
+                <div class="india-stats small">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">🏙️ Major Cities</span>
+                        <strong>7+</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">💻 IT Hubs</span>
+                        <strong>Covered</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">🎭 Cultural Sites</span>
+                        <strong>1000+</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

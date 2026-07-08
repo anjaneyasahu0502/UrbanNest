@@ -1,0 +1,24 @@
+<% layout('/layouts/boilerplate.ejs') %>
+<section class="card p-4">
+  <h2 class="h4">Booking Details</h2>
+  <p><strong>Listing:</strong> <a href="/listings/<%= booking.listing._id %>"><%= booking.listing.title %></a></p>
+  <p><strong>Guest:</strong> <%= booking.user.username || booking.user.email || 'Guest' %></p>
+  <p><strong>Dates:</strong> <%= new Date(booking.checkIn).toLocaleDateString() %> - <%= new Date(booking.checkOut).toLocaleDateString() %></p>
+  <p><strong>Total:</strong> &#8377; <%= booking.totalPrice.toLocaleString() %></p>
+  <p><strong>Paid:</strong> <%= booking.paid ? 'Yes' : 'No' %></p>
+  <p><strong>Status:</strong> <%= booking.status %></p>
+
+  <div class="mt-3">
+    <% if (isOwner || isHost) { %>
+      <form method="POST" action="/bookings/<%= booking._id %>?_method=DELETE" class="d-inline" onsubmit="return confirm('Cancel this booking?');">
+        <button class="btn btn-outline-danger">Cancel Booking</button>
+      </form>
+    <% } %>
+
+    <% if (isHost && booking.paid && booking.stripeSessionId) { %>
+      <form method="POST" action="/bookings/<%= booking._id %>/refund" class="d-inline ms-2" onsubmit="return confirm('Issue a refund?');">
+        <button class="btn btn-outline-warning">Issue Refund</button>
+      </form>
+    <% } %>
+  </div>
+</section>

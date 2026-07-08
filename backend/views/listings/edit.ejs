@@ -1,0 +1,9 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<%- include("_form.ejs", {
+    heading: "Edit Listing",
+    buttonLabel: "Update Listing",
+    formAction: "/listings/" + listing._id,
+    formMethod: "PUT",
+    listing,
+    error: error || null
+}) %>

@@ -1,0 +1,40 @@
+<% layout('/layouts/boilerplate.ejs') %>
+<section class="card shadow-sm p-4 mx-auto auth-page">
+  <h1 class="h3 mb-3">Create Account</h1>
+  <% if (error && error.length) { %>
+    <div class="alert alert-danger"><%= error[0] %></div>
+  <% } %>
+  <form action="/auth/register" method="POST">
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      <input name="username" class="form-control" required minlength="3" placeholder="Choose a username">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email Address</label>
+      <input name="email" type="email" class="form-control" required placeholder="your.email@example.com">
+      <small class="form-text text-muted">We'll send a verification code to this email</small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input name="password" class="form-control" type="password" required minlength="6" placeholder="At least 6 characters">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Confirm Password</label>
+      <input name="confirmPassword" class="form-control" type="password" required minlength="6" placeholder="Re-enter your password">
+    </div>
+    <button class="btn btn-danger w-100 mb-3" type="submit">Sign Up</button>
+  </form>
+  <hr>
+  <p class="text-center mb-0">
+    Already have an account? 
+    <a href="/auth/login" class="text-danger fw-bold">Sign In</a>
+  </p>
+</section>
+
+<style>
+  .auth-page {
+    max-width: 500px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+</style>

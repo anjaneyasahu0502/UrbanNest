@@ -1,0 +1,187 @@
+<% layout('/layouts/boilerplate.ejs') %>
+
+<div class="d-flex justify-content-center">
+  <section class="card shadow-lg admin-login-card">
+
+    <!-- Top tricolour stripe -->
+    <div class="india-flag-strip"></div>
+
+    <div class="card-body p-4 p-md-5">
+
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <div class="admin-shield-circle mx-auto mb-3">
+          <i class="bi bi-shield-lock-fill" style="font-size:2rem; color:#FF9933;"></i>
+        </div>
+        <h1 class="h3 fw-bold mb-1" style="color:#000080;">Admin Portal</h1>
+        <p class="text-muted small mb-0">UrbanNest &mdash; Restricted Access</p>
+        <div class="mt-2">
+          <span class="badge px-3 py-2" style="background:linear-gradient(135deg,#FF9933,#FF6B35);color:white;border-radius:2rem;font-size:0.78rem;">
+            🛡️ Administrator Only
+          </span>
+        </div>
+      </div>
+
+      <!-- Flash errors -->
+      <% if (error && error.length) { %>
+        <div class="alert alert-danger d-flex align-items-center gap-2 rounded-3">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span><%= error[0] %></span>
+        </div>
+      <% } %>
+      <% if (success && success.length) { %>
+        <div class="alert alert-success d-flex align-items-center gap-2 rounded-3">
+          <i class="bi bi-check-circle-fill"></i>
+          <span><%= success[0] %></span>
+        </div>
+      <% } %>
+
+      <!-- Form -->
+      <form action="/auth/admin/login" method="POST" autocomplete="off">
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold small">
+            <i class="bi bi-person-badge me-1" style="color:#FF9933;"></i>Admin Username
+          </label>
+          <input
+            name="username"
+            class="form-control form-control-lg admin-input"
+            required
+            placeholder="Enter admin username"
+            autocomplete="username"
+          >
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold small">
+            <i class="bi bi-lock-fill me-1" style="color:#FF9933;"></i>Password
+          </label>
+          <div class="input-group">
+            <input
+              name="password"
+              id="adminPassword"
+              class="form-control form-control-lg admin-input"
+              type="password"
+              required
+              placeholder="Enter admin password"
+              autocomplete="current-password"
+            >
+            <button class="btn admin-toggle-btn" type="button" id="togglePwd" tabindex="-1">
+              <i class="bi bi-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-admin-login w-100 btn-lg" type="submit">
+          <i class="bi bi-shield-check me-2"></i>Sign In as Admin
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <hr class="my-4">
+
+      <!-- Links -->
+      <div class="d-flex justify-content-between align-items-center small">
+        <a href="/auth/login" class="text-muted text-decoration-none">
+          <i class="bi bi-arrow-left me-1"></i>User Login
+        </a>
+        <a href="/" class="text-muted text-decoration-none">
+          <i class="bi bi-house me-1"></i>Back to Home
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Bottom accent -->
+    <div class="admin-card-footer text-center py-3">
+      <small class="text-muted">
+        🔒 Secure Admin Channel &bull; UrbanNest &copy; <%= new Date().getFullYear() %>
+      </small>
+    </div>
+
+  </section>
+</div>
+
+<style>
+  .admin-login-card {
+    width: 100%;
+    max-width: 460px;
+    border: 2px solid #FFE6CC;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .admin-shield-circle {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFF5E6, #FFE6CC);
+    border: 2.5px solid #FF9933;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .admin-input {
+    border: 2px solid #e9ecef;
+    border-radius: 0.75rem !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 1rem;
+  }
+  .admin-input:focus {
+    border-color: #FF9933;
+    box-shadow: 0 0 0 3px rgba(255,153,51,0.15);
+  }
+
+  .input-group .admin-input {
+    border-right: none;
+    border-radius: 0.75rem 0 0 0.75rem !important;
+  }
+
+  .admin-toggle-btn {
+    border: 2px solid #e9ecef;
+    border-left: none;
+    border-radius: 0 0.75rem 0.75rem 0 !important;
+    background: white;
+    color: #adb5bd;
+    transition: color 0.2s;
+  }
+  .admin-toggle-btn:hover { color: #FF9933; }
+
+  .btn-admin-login {
+    background: linear-gradient(135deg, #000080, #1a1aff);
+    color: white;
+    border: none;
+    font-weight: 700;
+    border-radius: 0.75rem;
+    letter-spacing: 0.01em;
+    transition: all 0.3s ease;
+  }
+  .btn-admin-login:hover {
+    background: linear-gradient(135deg, #1a1aff, #000080);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,128,0.3);
+  }
+
+  .admin-card-footer {
+    background: linear-gradient(135deg, #f8f9fa, #FFF5E6);
+    border-top: 1px solid #FFE6CC;
+  }
+</style>
+
+<script>
+  document.getElementById('togglePwd').addEventListener('click', function () {
+    const pwd  = document.getElementById('adminPassword');
+    const icon = document.getElementById('eyeIcon');
+    if (pwd.type === 'password') {
+      pwd.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      pwd.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  });
+</script>

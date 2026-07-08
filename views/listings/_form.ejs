@@ -1,0 +1,58 @@
+<div class="card shadow-sm form-card">
+    <div class="card-body p-4 p-md-5">
+        <h1 class="h3 mb-4"><%= heading %></h1>
+
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <strong>Please fix the following:</strong>
+                <ul class="mb-0 mt-2">
+                    <% Object.values(error.errors).forEach((item) => { %>
+                        <li><%= item.message %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+
+        <form action="<%= formAction %>" method="POST" enctype="multipart/form-data" class="listing-form">
+            <% if (formMethod === "PUT") { %>
+                <input type="hidden" name="_method" value="PUT">
+            <% } %>
+
+            <div class="mb-3">
+                <label class="form-label" for="listing-title">Title</label>
+                <input class="form-control" id="listing-title" name="listing[title]" type="text" value="<%= listing.title || '' %>" required minlength="3" maxlength="80">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="listing-description">Description</label>
+                <textarea class="form-control" id="listing-description" name="listing[description]" rows="4" required minlength="20"><%= listing.description || '' %></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="listing-image">Image URL</label>
+                <input class="form-control mb-2" id="listing-image" name="listing[image][url]" type="url" value="<%= listing.image && listing.image.url ? listing.image.url : '' %>">
+                <label class="form-label" for="imageFile">Or upload an image</label>
+                <input class="form-control" id="imageFile" name="imageFile" type="file" accept="image/*">
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label" for="listing-price">Price</label>
+                    <input class="form-control" id="listing-price" name="listing[price]" type="number" min="0" value="<%= listing.price || '' %>" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="listing-location">Location</label>
+                    <input class="form-control" id="listing-location" name="listing[location]" type="text" value="<%= listing.location || '' %>" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="listing-country">Country</label>
+                    <input class="form-control" id="listing-country" name="listing[country]" type="text" value="<%= listing.country || '' %>" required>
+                </div>
+            </div>
+
+            <button class="btn btn-danger mt-4" type="submit"><%= buttonLabel %></button>
+        </form>
+    </div>
+</div>
