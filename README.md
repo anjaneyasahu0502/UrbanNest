@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # UrbanNest - India's Premier Urban Accommodation Platform
 
 Modern full-stack platform for urban accommodations across India, featuring AI-powered travel assistance.
@@ -153,3 +154,6 @@ Stripe webhooks
 Notes
 - After pulling changes, run `npm install` to install new dependencies (`nodemailer`, `twilio`).
 - This project is a demo and lacks production-ready hardening — secure secrets, enable HTTPS, and configure persistent image storage for production.
+=======
+# UrbanNest
+>>>>>>> b1acb9b259a7f10172af967759a91deb2c9eeca2
