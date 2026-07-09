@@ -32,13 +32,34 @@ const authRouter       = require('./routes/auth.js');
 const MONGO_URL = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/urbannest';
 const PORT = process.env.PORT || 8080;
 
-async function main() {
-    await mongoose.connect(MONGO_URL);
+// Cached connection for serverless environments (Vercel)
+let cachedConnection = null;
+
+async function connectDB() {
+    if (cachedConnection && mongoose.connection.readyState === 1) {
+        return cachedConnection;
+    }
+    cachedConnection = await mongoose.connect(MONGO_URL, {
+        serverSelectionTimeoutMS: 10000,
+        socketTimeoutMS: 45000,
+    });
     console.log('Connected to DB');
+    return cachedConnection;
 }
 
+// Middleware to ensure DB is connected on every request (needed for Vercel serverless)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error('DB connection error:', err.message);
+        next(err);
+    }
+});
+
 if (require.main === module) {
-    main()
+    connectDB()
         .then(() => {
             app.listen(PORT, () => {
                 console.log(`UrbanNest backend running on port ${PORT}`);
@@ -48,10 +69,6 @@ if (require.main === module) {
             console.error('MongoDB connection failed:', err.message);
             process.exit(1);
         });
-} else {
-    main().catch((err) => {
-        console.error('MongoDB connection failed:', err.message);
-    });
 }
 
 // ── CORS ─────────────────────────────────────────────────────────────────────
