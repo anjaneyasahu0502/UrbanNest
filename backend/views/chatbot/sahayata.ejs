@@ -438,8 +438,8 @@
       }
     } catch (error) {
       hideTyping();
-      addMessage('❌ Sorry, I encountered an error. Please try again. 🙏', false);
-      console.error('Error:', error);
+      addMessage('❌ Error: ' + (error.message || 'Network request failed. Check console.'), false);
+      console.error('Chatbot fetch error:', error);
     }
   }
 
