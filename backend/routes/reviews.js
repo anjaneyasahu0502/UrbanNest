@@ -5,7 +5,7 @@ const Review = require("../models/review.js");
 const Booking = require("../models/booking.js");
 const ExpressError = require("../utils/ExpressError.js");
 const wrapAsync = require("../utils/wrapAsync.js");
-const { loadListing, isLoggedIn, isReviewAuthor, isAdmin } = require("../middleware.js");
+const { loadListing, isLoggedIn, isReviewAuthor, isAdmin } = require("../appMiddleware.js");
 
 router.use(loadListing);
 

@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 const wrapAsync = require("../utils/wrapAsync.js");
-const { validateListing, loadListing, isLoggedIn, isListingAuthor, isAdmin } = require("../middleware.js");
+const { validateListing, loadListing, isLoggedIn, isListingAuthor, isAdmin } = require("../appMiddleware.js");
 const { buildMongoSearchQuery, getSearchAssistant } = require("../utils/searchAssistant.js");
 const Booking = require("../models/booking.js");
 const Review = require("../models/review.js");

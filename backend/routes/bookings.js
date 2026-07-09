@@ -4,7 +4,7 @@ const Listing = require('../models/listing');
 const Booking = require('../models/booking');
 const wrapAsync = require('../utils/wrapAsync');
 const ExpressError = require('../utils/ExpressError');
-const { isLoggedIn, loadListing } = require('../middleware');
+const { isLoggedIn, loadListing } = require('../appMiddleware');
 
 // helper to check date overlap
 function datesOverlap(startA, endA, startB, endB) {

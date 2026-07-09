@@ -3,7 +3,7 @@ const router = express.Router();
 const Booking = require('../models/booking');
 const Listing = require('../models/listing');
 const wrapAsync = require('../utils/wrapAsync');
-const { isLoggedIn } = require('../middleware');
+const { isLoggedIn } = require('../appMiddleware');
 
 function buildMonthGrid(year, month, bookedSet) {
   // month: 0-11
