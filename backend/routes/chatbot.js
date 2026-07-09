@@ -109,15 +109,15 @@ Always prioritize accuracy and helpfulness. If you don't know something, say so 
     console.error('Error stack:', error.stack);
     
     // Provide more helpful error messages
-    if (error.message.includes('fetch')) {
+    if (error.message.includes('fetch') || error.name === 'TypeError') {
       return res.status(500).json({
-        response: 'Sahayata Chatbot: Network error. Please check your internet connection. 🌐',
+        response: `Sahayata Chatbot: Network error reaching Groq API — ${error.message}. 🌐`,
         error: true
       });
     }
     
     res.status(500).json({
-      response: 'Sahayata Chatbot: An unexpected error occurred. Please try again. 🙏',
+      response: `Sahayata Chatbot: Error — ${error.message} 🙏`,
       error: true
     });
   }
