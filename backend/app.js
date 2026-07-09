@@ -48,7 +48,9 @@ async function connectDB() {
 }
 
 // Middleware to ensure DB is connected on every request (needed for Vercel serverless)
+// Skip for chatbot route since it only calls Groq API, not MongoDB
 app.use(async (req, res, next) => {
+    if (req.path.startsWith('/sahayata')) return next();
     try {
         await connectDB();
         next();
