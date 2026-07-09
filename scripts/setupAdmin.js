@@ -8,8 +8,8 @@ async function main() {
   await mongoose.connect(MONGO_URL);
   try {
     const adminEmail = 'anjaneyasahu0502@gmail.com';
-    const adminUsername = 'admin_anjaneya';
-    const adminPassword = '123456';
+    const adminUsername = 'anjaneya0502';
+    const adminPassword = 'b8=Yp&7Fc#0J';
 
     let admin = await User.findOne({ email: adminEmail });
     

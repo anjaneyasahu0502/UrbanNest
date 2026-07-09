@@ -6,8 +6,8 @@ const bcrypt = require('bcrypt');
 const MONGO_URL = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/urbannest';
 
 const ADMIN_EMAIL    = 'anjaneyasahu0502@gmail.com';
-const ADMIN_USERNAME = 'anjaneyasahu0502';
-const ADMIN_PASSWORD = '123456';
+const ADMIN_USERNAME = 'anjaneya0502';
+const ADMIN_PASSWORD = 'b8=Yp&7Fc#0J';
 
 async function main() {
   await mongoose.connect(MONGO_URL);
